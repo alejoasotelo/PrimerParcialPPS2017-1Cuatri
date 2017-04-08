@@ -7,6 +7,7 @@ Enunciado del primer parcial de la práctica profesional supervisada 2017 , prim
 <h5>Objetivo: Realizar los parciales con funcionalidades definidas en los enunciados, siendo funcionales en dispositivos moviles</h5>
 -------------------------------------------------------------------------------------
 <p>Agregar una pagina a cada app llamada "Acerca de..." con los datos mios. Nombre, Apellido, pagina web, etc.</p>
+<p>Agregar una carpeta "apk-generado" donde tirar las apk de las apps.</p>
 
 <h6 id="inicializacionDelObjeto"> <strong>A. </strong> Trivia</h6>
 <ol>
