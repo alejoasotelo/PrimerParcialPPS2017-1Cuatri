@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
+
 import { Vibration } from '@ionic-native/vibration';
+import { AngularFire, FirebaseListObservable } from 'angularfire2';
 
 @Component({
   selector: 'page-home',
@@ -9,9 +11,11 @@ import { Vibration } from '@ionic-native/vibration';
 export class HomePage {
 
   private vibrating : boolean = false;
+  private items: FirebaseListObservable<any[]>;
 
-  constructor(public navCtrl: NavController, private vibration: Vibration) {
+  constructor(public navCtrl: NavController, private vibration: Vibration, af: AngularFire) {
       this.vibration = vibration;
+      this.items = af.database.list('/preguntas');
   }
 
   toggleVibrator(): void {

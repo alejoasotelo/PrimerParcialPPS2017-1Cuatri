@@ -12,6 +12,15 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Vibration } from '@ionic-native/vibration';
 
+import { AngularFireModule } from 'angularfire2';
+
+export const firebaseConfig = {
+  apiKey: "AIzaSyCJvCVb58S2C2VwpX6y3XIKikya3phvUJo",
+  authDomain: "trivia-proyecto17.firebaseapp.com",
+  databaseURL: "https://trivia-proyecto17.firebaseio.com/",
+  storageBucket: "trivia-proyecto17.appspot.com"
+};
+
 @NgModule({
   declarations: [
     MyApp,
@@ -22,7 +31,8 @@ import { Vibration } from '@ionic-native/vibration';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    AngularFireModule.initializeApp(firebaseConfig)
   ],
   bootstrap: [IonicApp],
   entryComponents: [
