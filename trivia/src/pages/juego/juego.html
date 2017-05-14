@@ -1,0 +1,42 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>Juego</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+    <div *ngIf="!mostrar_finalizar">
+        <p>Pregunta: {{paso + ' de ' + MAX_PREGUNTAS}}</p>
+
+        <ion-list *ngIf="pregunta_actual != null">
+            <ion-list-header>{{ pregunta_actual.pregunta }}</ion-list-header>
+            <ion-item *ngFor="let respuesta of pregunta_actual.posibles_respuestas; let i = index;" (click)="responder(i, i == pregunta_actual.respuesta)">
+                {{ respuesta }}
+            </ion-item>
+        </ion-list>
+
+        <p *ngIf="mostrar_siguiente && es_respuesta_correcta">Su respuesta es correcta!</p>
+        <p *ngIf="mostrar_siguiente && !es_respuesta_correcta">Su respuesta es incorrecta</p>
+
+        <button *ngIf="mostrar_siguiente" ion-button color="light" (click)="mostrarSiguientePregunta()">Siguiente</button>
+    </div>
+
+    <div *ngIf="mostrar_finalizar">
+        <ul>
+            <li *ngFor="let respuesta of respuestas">
+                {{ respuesta.pregunta.pregunta }}<br>
+                {{ respuesta.pregunta.posibles_respuestas[respuesta.respuesta] }}: {{respuesta.es_correcta ? 'Correcta' : 'Incorrecta'}}<br>
+            </li>
+        </ul>
+
+        <button ion-button color="light" (click)="finalizar()">Volver</button>
+    </div>
+
+    <ion-list>
+        <ion-item class="text" *ngFor="let item of items | async">
+            {{ item.pregunta }}
+        </ion-item>
+    </ion-list>
+    <button ion-button color="light" (click)="toggleVibrator()">Toggl vibrador</button>
+</ion-content>

@@ -1,3 +1,13 @@
 page-contact {
 
+    .item-profile {
+        height: auto;
+
+        & > img:first-child {
+            width: auto;
+            height: auto;
+            border-radius: 100px;
+        }
+    }
+
 }
