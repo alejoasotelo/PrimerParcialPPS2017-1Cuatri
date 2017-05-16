@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-
+import { NativeAudio } from '@ionic-native/native-audio';
 import { Vibration } from '@ionic-native/vibration';
+
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 
 import { LoginPage } from '../login/login';
@@ -48,11 +49,13 @@ export class JuegoPage {
         }
     ];
 
+    private clicked = [false, false, false];
+
     private respuestas;
 
     private paso : number;
     private pregunta_actual : object;
-    private preguntas_respondidas : Array<number>; // Guarda los indices del array de las preguntas respondidas.
+    private preguntas_respondidas : Array<object>; // Guarda los indices del array de las preguntas respondidas.
 
     private mostrar_finalizar = false;
     private mostrar_siguiente = false;
@@ -60,18 +63,27 @@ export class JuegoPage {
 
     private usuarios : FirebaseListObservable<any[]>;
 
-    constructor(public navCtrl: NavController, private param : NavParams, private vibration: Vibration, af: AngularFire) {
+    private audio : NativeAudio;
+
+    constructor(public navCtrl: NavController, private param : NavParams, private vibration: Vibration, af: AngularFire, private nativeAudio: NativeAudio) {
         console.log(param.data);
 
         // conecto con la base de datos Firebase.
         this.usuarios = af.database.list('/usuarios');
 
+        let d = new Date();
         this.usuario = {
-            nombre: param.data
+            nombre: param.data,
+            fecha_creacion: d.getDate()+'/'+d.getMonth()+'/'+d.getFullYear()+' '+d.getHours()+':'+d.getMinutes()+':'+d.getMinutes()
         };
 
-        /*this.vibration = vibration;
-        this.items = af.database.list('/preguntas');*/
+        /* Cargo los audios */
+        this.audio = nativeAudio;
+        this.audio.preloadSimple('correcto', 'assets/audios/correcto.mp3');
+        this.audio.preloadSimple('incorrecto', 'assets/audios/incorrecto.mp3');
+
+        this.vibration = vibration;
+
         this.inicializar();
         this.mostrarSiguientePregunta();
     }
@@ -85,44 +97,52 @@ export class JuegoPage {
         this.mostrar_siguiente = false;
         this.es_respuesta_correcta = false;
         this.mostrar_finalizar = false;
+
+        this.preguntas = this.randomArray(this.preguntas);
     }
 
     mostrarSiguientePregunta() {
 
+        for(let i =0; i < this.clicked.length; i++) {
+            this.clicked[i] = false;
+        }
+
         if (this.paso >= this.MAX_PREGUNTAS) {
             this.mostrar_finalizar = true;
+            // Guardo los resultados.
+            this.usuario.respuestas = this.respuestas;
+            this.guardarUsuario(this.usuario);
         } else {
             this.mostrar_siguiente = false;
             this.pregunta_actual = this.obtenerPregunta();
+            this.preguntas_respondidas.push(this.pregunta_actual);
             this.paso++;
         }
     }
 
     obtenerPregunta() : object {
-
-        // Si ya estan todas las preguntas hechas devuelvo null
-        if (this.preguntas_respondidas.length == this.MAX_PREGUNTAS) {
-            return null;
-        }
-
-        let pregunta = null;
-        let j = 0;
-        while (pregunta == null && j < this.preguntas.length)
-        {
-            let i = this.getRandomInt(0, 2);
-
-            // Si la pregunta no se respondio entro
-            if (this.preguntas_respondidas.indexOf(i) == -1) {
-                this.preguntas_respondidas.push(i);
-                pregunta = this.preguntas[i];
-            }
-
-            j++;
-        }
-
-        console.log(pregunta);
-
+        let pregunta = this.preguntas[this.paso];
         return pregunta;
+    }
+
+    /**
+     * Funcion para desordenar un array
+     * @param  Array array
+     * @return Array       Devuelve el array desordenado
+     */
+    private randomArray(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+
+        while (0 !== currentIndex) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+
+        return array;
     }
 
     responder(index_respuesta, es_correcta) : boolean {
@@ -130,6 +150,11 @@ export class JuegoPage {
         if (this.mostrar_siguiente) {
             return false;
         }
+
+        this.clicked[index_respuesta] = true;
+
+        this.vibrar(es_correcta);
+        this.emitirSonido(es_correcta);
 
         let respuesta = {pregunta: this.pregunta_actual, respuesta: index_respuesta, es_correcta: es_correcta};
 
@@ -147,10 +172,6 @@ export class JuegoPage {
     }
 
     finalizar() {
-        this.usuario.respuestas = this.respuestas;
-        let d = new Date();
-        this.usuario.fecha_creacion = d.getDate()+'/'+d.getMonth()+'/'+d.getFullYear()+' '+d.getHours()+':'+d.getMinutes()+':'+d.getMinutes();
-        this.guardarUsuario(this.usuario);
         this.irAlLogin();
     }
 
@@ -163,13 +184,28 @@ export class JuegoPage {
         this.navCtrl.setRoot(LoginPage);
     }
 
+    vibrar(es_correcta : boolean) {
 
+        if (es_correcta) {
+            this.vibrating = true;
+            this.vibration.vibrate(400);
+            this.vibrating = false;
+        } else {
+            this.vibrating = true;
+            this.vibration.vibrate([400,400,400]);
+            this.vibrating = false;
+        }
 
-    toggleVibrator(): void {
-        this.vibrating = true;
-        this.vibration.vibrate(1000);
-        this.vibration.vibrate(0);
-        this.vibrating = false;
+    }
+
+    emitirSonido(es_correcta : boolean) {
+
+        if (es_correcta) {
+            this.audio.play('correcto',() => console.log('ok is done playing'));
+        } else {
+            this.audio.play('incorrecto',() => console.log('ok is done playing'));
+        }
+
     }
 
 }
