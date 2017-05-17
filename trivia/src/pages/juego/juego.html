@@ -13,14 +13,10 @@
 
         <ion-list *ngIf="pregunta_actual != null">
             <ion-item *ngFor="let respuesta of pregunta_actual.posibles_respuestas; let i = index;">
-                <button ion-button [color]="clicked[i] ? 'secondary' : 'primary'" (click)="responder(i, i == pregunta_actual.respuesta);">{{ respuesta }}</button>
+                <button ion-button [color]="clicked[i] ? 'secondary' : 'light'" padding (click)="responder(i, i == pregunta_actual.respuesta);">{{ respuesta }}</button>
             </ion-item>
         </ion-list>
 
-        <!--
-        <p *ngIf="mostrar_siguiente && es_respuesta_correcta">Su respuesta es correcta!</p>
-        <p *ngIf="mostrar_siguiente && !es_respuesta_correcta">Su respuesta es incorrecta</p>
-        -->
         <ion-buttons end>
             <button *ngIf="mostrar_siguiente" ion-button color="primary" (click)="mostrarSiguientePregunta()" end>
                     Siguiente <ion-icon name="right"></ion-icon>
