@@ -1,0 +1,30 @@
+<!--
+  Generated template for the Login page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="dark">
+    <ion-title>Iniciar sesión</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+    <ion-row>
+        <ion-col>
+            <form (ngSubmit)="login()">
+                <p>Ingrese su nombre de usuario para empezar a jugar.</p>
+                <ion-item>
+                    <ion-label floating>Nombre de usuario</ion-label>
+                    <ion-input type="text" [(ngModel)]="user.username" [ngModelOptions]="{standalone:true}"></ion-input>
+                </ion-item>
+                <div padding>
+                    <button ion-button type="submit" [disabled]="!user.username" block>Iniciar sesion</button>
+                </div>
+            </form>
+        </ion-col>
+    </ion-row>
+</ion-content>

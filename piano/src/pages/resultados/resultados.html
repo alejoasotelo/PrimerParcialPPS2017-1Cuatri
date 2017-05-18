@@ -1,0 +1,66 @@
+<ion-header>
+    <ion-navbar color="dark">
+        <ion-title>
+            Resultados
+        </ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+    <p *ngIf="error">{{error}}</p>
+
+    <div *ngIf="cargando_usuarios" text-center>
+        <ion-spinner  text-center name="bubbles"></ion-spinner>
+    </div>
+
+    <ion-list>
+        <ion-card *ngFor="let usuario of usuarios | async">
+
+            <ion-item>
+                <h2>{{ usuario.nombre }}</h2>
+                <p>{{ usuario.fecha_creacion }}</p>
+            </ion-item>
+
+            <ion-item>
+                <ion-row>
+                    <ion-col col-5>
+                        <h2>Usted</h2>
+                        <img  src="assets/imagenes/{{usuario.jugador}}.jpg" style="width: 48px; height: 48px;"/>
+                        <p>{{usuario.jugador}}</p>
+                    </ion-col>
+                    <ion-col col-2>
+                        <h2>vs</h2>
+                    </ion-col>
+                    <ion-col col-5>
+                        <h2>Máquina</h2>
+                        <img src="assets/imagenes/{{usuario.maquina}}.jpg" style="width: 48px; height: 48px;"/>
+                        <p>{{usuario.maquina}}</p>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row>
+                    <ion-col>
+                        <br>
+                        <h2 *ngIf="usuario.resultado == -1">
+                        <ion-icon name="close-circle" color="danger" large></ion-icon>
+                            Perdiste.<br>La máquina te ha ganado
+                        </h2>
+                        <h2 *ngIf="usuario.resultado == 0">
+                        <ion-icon name="remove-circle" color="light" large></ion-icon>
+                            Empate
+                        </h2>
+                        <h2 *ngIf="usuario.resultado == 1">
+                        <ion-icon name="checkmark-circle" color="primary" large></ion-icon>
+                            Ganaste campeón!!!
+                        </h2>
+
+                    </ion-col>
+                </ion-row>
+            </ion-item>
+
+        </ion-card>
+
+    </ion-list>
+
+</ion-content>
