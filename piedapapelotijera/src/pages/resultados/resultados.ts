@@ -10,22 +10,24 @@ export class ResultadosPage {
 
     private usuarios : FirebaseListObservable<any[]>;
 
-    private filtro = 1;
+    private filtro = 2;
     private af;
+
+    private cargando_usuarios = false;
+    private error;
 
     constructor(public navCtrl: NavController, af: AngularFire) {
 
         this.af = af;
 
-        this.usuarios = af.database.list('/piedrapapelotijera/usuarios', {
-            query: {
-                limitToLast: 10
-            }
-        });
+        // Cargo todos los resultados.
+        this.onChange(2);
 
     }
 
     onChange(new_value) {
+        this.cargando_usuarios = true;
+
         new_value = parseInt(new_value);
 
         // Mostrar todos
@@ -49,6 +51,20 @@ export class ResultadosPage {
             });
 
         }
+
+        let self = this;
+
+        this.usuarios.subscribe(
+            function (x) {
+                self.cargando_usuarios = false;
+                console.log('onNext: %s', x);
+            },
+            function (e) {
+                self.cargando_usuarios = false;
+                self.error = e;
+                console.log('onError: %s', e);
+            }
+        );
     }
 
 }

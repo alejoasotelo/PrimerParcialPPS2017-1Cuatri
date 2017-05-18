@@ -44,7 +44,6 @@ export class JuegoPage {
     };
 
     constructor(public navCtrl: NavController, private param : NavParams, private vibration: Vibration, af: AngularFire, private nativeAudio: NativeAudio) {
-        console.log(param.data);
 
         // conecto con la base de datos Firebase.
         this.usuarios = af.database.list('/piedrapapelotijera/usuarios');
