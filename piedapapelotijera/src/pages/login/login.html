@@ -18,10 +18,12 @@
             <form (ngSubmit)="login()">
                 <p>Ingrese su nombre de usuario para empezar a jugar.</p>
                 <ion-item>
-                    <ion-label>Nombre de usuario</ion-label>
+                    <ion-label floating>Nombre de usuario</ion-label>
                     <ion-input type="text" [(ngModel)]="user.username" [ngModelOptions]="{standalone:true}"></ion-input>
                 </ion-item>
-                <button ion-button type="submit" [disabled]="!user.username" block>Iniciar sesion</button>
+                <div padding>
+                    <button ion-button type="submit" [disabled]="!user.username" block>Iniciar sesion</button>
+                </div>
             </form>
         </ion-col>
     </ion-row>

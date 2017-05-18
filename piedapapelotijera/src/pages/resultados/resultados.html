@@ -9,6 +9,17 @@
 <ion-content padding>
 
     <ion-list>
+        <ion-item>
+            <ion-label>Filtrar por:</ion-label>
+            <ion-select [(ngModel)]="filtro" (ngModelChange)="onChange($event)">
+                <ion-option value="0">Juegos empatados</ion-option>
+                <ion-option value="-1">Juegos perdidos</ion-option>
+                <ion-option value="1">Juegos ganados</ion-option>
+            </ion-select>
+        </ion-item>
+    </ion-list>
+
+    <ion-list>
         <ion-card *ngFor="let usuario of usuarios | async">
 
             <ion-item>
@@ -16,10 +27,41 @@
                 <p>{{ usuario.fecha_creacion }}</p>
             </ion-item>
 
-            <ion-item *ngFor="let respuesta of usuario.respuestas">
-                <h2>{{ respuesta.pregunta.pregunta }}</h2>
-                <p>{{ respuesta.pregunta.posibles_respuestas[respuesta.respuesta] }}</p>
-                <ion-icon name="{{respuesta.es_correcta ? 'checkmark-circle' : 'close-circle'}}" color="{{respuesta.es_correcta ? 'primary' : 'danger'}}" item-right large></ion-icon>
+            <ion-item>
+                <ion-row>
+                    <ion-col col-5>
+                        <h2>Usted</h2>
+                        <img  src="assets/imagenes/{{usuario.jugador}}.jpg" style="width: 48px; height: 48px;"/>
+                        <p>{{usuario.jugador}}</p>
+                    </ion-col>
+                    <ion-col col-2>
+                        <h2>vs</h2>
+                    </ion-col>
+                    <ion-col col-5>
+                        <h2>Máquina</h2>
+                        <img src="assets/imagenes/{{usuario.maquina}}.jpg" style="width: 48px; height: 48px;"/>
+                        <p>{{usuario.maquina}}</p>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row>
+                    <ion-col>
+                        <br>
+                        <h2 *ngIf="usuario.resultado == -1">
+                        <ion-icon name="close-circle" color="danger" large></ion-icon>
+                            Perdiste.<br>La máquina te ha ganado
+                        </h2>
+                        <h2 *ngIf="usuario.resultado == 0">
+                        <ion-icon name="remove-circle" color="light" large></ion-icon>
+                            Empate
+                        </h2>
+                        <h2 *ngIf="usuario.resultado == 1">
+                        <ion-icon name="checkmark-circle" color="primary" large></ion-icon>
+                            Ganaste campeón!!!
+                        </h2>
+
+                    </ion-col>
+                </ion-row>
             </ion-item>
 
         </ion-card>
