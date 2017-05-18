@@ -28,13 +28,27 @@ export class ResultadosPage {
     onChange(new_value) {
         new_value = parseInt(new_value);
 
-        this.usuarios = this.af.database.list('/piedrapapelotijera/usuarios', {
-            query: {
-                orderByChild: 'resultado',
-                limitToLast: 10,
-                equalTo: new_value
-            }
-        });
+        // Mostrar todos
+        if (new_value == 2) {
+
+            this.usuarios = this.af.database.list('/piedrapapelotijera/usuarios', {
+                query: {
+                    orderByChild: 'fecha_creacion',
+                    limitToLast: 20
+                }
+            });
+
+        } else {
+
+            this.usuarios = this.af.database.list('/piedrapapelotijera/usuarios', {
+                query: {
+                    orderByChild: 'resultado',
+                    limitToLast: 10,
+                    equalTo: new_value
+                }
+            });
+
+        }
     }
 
 }
