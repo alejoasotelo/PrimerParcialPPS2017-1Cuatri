@@ -8,6 +8,12 @@
 
 <ion-content padding>
 
+    <p *ngIf="error">{{error}}</p>
+
+    <div *ngIf="cargando_usuarios" text-center>
+        <ion-spinner  text-center name="bubbles"></ion-spinner>
+    </div>
+
     <ion-list>
         <ion-card *ngFor="let usuario of usuarios | async">
 

@@ -9,8 +9,13 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
 export class ResultadosPage {
 
     private usuarios : FirebaseListObservable<any[]>;
+    private cargando_usuarios = false;
+    private error;
 
     constructor(public navCtrl: NavController, af: AngularFire) {
+        this.cargando_usuarios = true;
+
+        let self = this;
 
         this.usuarios = af.database.list('/usuarios', {
             query: {
@@ -18,11 +23,17 @@ export class ResultadosPage {
             }
         });
 
-        /*this.usuarios.subscribe(snapshots=>{
-            snapshots.forEach(snapshot => {
-              console.log(snapshot);
-            });
-        });*/
+        this.usuarios.subscribe(
+            function (x) {
+                self.cargando_usuarios = false;
+                console.log('onNext: %s', x);
+            },
+            function (e) {
+                self.cargando_usuarios = false;
+                self.error = e;
+                console.log('onError: %s', e);
+            }
+        );
 
     }
 
