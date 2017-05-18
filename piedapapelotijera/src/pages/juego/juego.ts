@@ -23,7 +23,7 @@ export class JuegoPage {
 
     private mostrar_opciones;
     private mostrar_resultado;
-    private mostrar_resultado_con_delay;
+    private cargando_maquina = false;
 
     private resultados = {
         'piedra': {
@@ -54,8 +54,6 @@ export class JuegoPage {
             fecha_creacion: this.getFechaActual()
         };
 
-        console.log(this.usuario);
-
         /* Cargo los audios */
         this.audio = nativeAudio;
 
@@ -84,7 +82,6 @@ export class JuegoPage {
     }
 
     inicializar() {
-        console.log('inicializando...');
         // Cargo los audios
         this.audio.preloadSimple('correcto', 'assets/audios/correcto.mp3');
         this.audio.preloadSimple('incorrecto', 'assets/audios/incorrecto.mp3');
@@ -92,7 +89,6 @@ export class JuegoPage {
 
         this.mostrar_opciones = false;
         this.mostrar_resultado = false;
-        this.mostrar_resultado_con_delay = false;
         this.usuario.jugador = null;
         this.usuario.maquina = null;
     }
@@ -111,7 +107,6 @@ export class JuegoPage {
 
     }
 
-    private cargando_maquina = false;
     mostrarEleccionMaquina() {
         this.usuario.maquina = this.generarEleccionMaquina();
         this.mostrar_resultado = true;
@@ -120,7 +115,6 @@ export class JuegoPage {
         this.cargando_maquina = true;
         setTimeout(() => {
             this.cargando_maquina = false;
-            this.mostrar_resultado_con_delay = true;
             this.emitirResultado(this.usuario.resultado);
             this.vibrarResultado(this.usuario.resultado);
         }, 2000);
