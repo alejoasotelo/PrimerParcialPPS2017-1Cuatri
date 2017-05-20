@@ -23,4 +23,10 @@ page-contact {
         width: 100%;
     }
 
+    .evitar-salto-linea{
+        ion-label{
+            white-space: normal;
+        }
+    }
+
 }

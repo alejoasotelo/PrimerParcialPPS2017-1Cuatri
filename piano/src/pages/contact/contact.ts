@@ -12,7 +12,8 @@ export class ContactPage {
 
   constructor(public navCtrl: NavController, private file: File) {
 
-      this.dir = file.dataDirectory
+      this.dir = file.dataDirectory;
+      console.log(this.dir);
 
   }
 
