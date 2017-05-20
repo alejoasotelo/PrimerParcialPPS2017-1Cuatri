@@ -16,6 +16,7 @@ import { NativeAudio } from '@ionic-native/native-audio';
 
 import { AngularFireModule } from 'angularfire2';
 import { ParallaxHeader } from '../components/parallax-header/parallax-header';
+import { File } from '@ionic-native/file';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCJvCVb58S2C2VwpX6y3XIKikya3phvUJo",
@@ -53,6 +54,7 @@ export const firebaseConfig = {
     SplashScreen,
     Vibration,
     NativeAudio,
+    File,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

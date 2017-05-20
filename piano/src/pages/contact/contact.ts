@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import { File } from '@ionic-native/file';
 
 @Component({
   selector: 'page-contact',
@@ -7,7 +8,11 @@ import { NavController } from 'ionic-angular';
 })
 export class ContactPage {
 
-  constructor(public navCtrl: NavController) {
+    private dir;
+
+  constructor(public navCtrl: NavController, private file: File) {
+
+      this.dir = file.dataDirectory
 
   }
 

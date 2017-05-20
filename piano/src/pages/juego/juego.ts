@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { NativeAudio } from '@ionic-native/native-audio';
 import { Vibration } from '@ionic-native/vibration';
-
+import { File } from '@ionic-native/file';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 
 import { LoginPage } from '../login/login';
@@ -21,46 +21,36 @@ export class JuegoPage {
 
     private audio : NativeAudio;
 
-    private mostrar_opciones;
-    private mostrar_resultado;
-    private cargando_maquina = false;
+    private botones = [
+        'gato', 'caballo', 'gallo', 'pato', 'perro', 'rana'
+    ]
 
-    private resultados = {
-        'piedra': {
-            'piedra': 0,
-            'papel': -1,
-            'tijera': 1
-        },
-        'papel': {
-            'piedra': 1,
-            'papel': 0,
-            'tijera': -1
-        },
-        'tijera' : {
-            'piedra': -1,
-            'papel': 1,
-            'tijera': 0
-        }
-    };
+    private historial;
+    private file: File;
 
-    constructor(public navCtrl: NavController, private param : NavParams, private vibration: Vibration, af: AngularFire, private nativeAudio: NativeAudio) {
-        console.log(param.data);
+    constructor(public navCtrl: NavController, private param : NavParams, private vibration: Vibration, af: AngularFire, private nativeAudio: NativeAudio, private files: File, private alertCtrl: AlertController) {
 
         // conecto con la base de datos Firebase.
-        this.usuarios = af.database.list('/piedrapapelotijera/usuarios');
+        this.usuarios = af.database.list('/piano/usuarios');
 
         this.usuario = {
             nombre: typeof param.data == "string" ? param.data  : 'Nombre de usuario',
-            fecha_creacion: this.getFechaActual()
+            fecha_creacion: this.getFechaActual(),
+            invert_time: Number.MAX_SAFE_INTEGER - Date.now()
         };
+
+        this.file = files;
 
         /* Cargo los audios */
         this.audio = nativeAudio;
 
         this.vibration = vibration;
 
+        console.log('Directorios');
+        console.info(this.file);
+        console.info(this.file.dataDirectory);
+
         this.inicializar();
-        this.comenzarJuego();
     }
 
     getFechaActual() {
@@ -83,103 +73,97 @@ export class JuegoPage {
 
     inicializar() {
         // Cargo los audios
-        this.audio.preloadSimple('correcto', 'assets/audios/correcto.mp3');
-        this.audio.preloadSimple('incorrecto', 'assets/audios/incorrecto.mp3');
-        this.audio.preloadSimple('empate', 'assets/audios/empate.mp3');
+        this.audio.preloadSimple('caballo', 'assets/audios/caballo.mp3').then(_ => {}).catch(err => {});
+        this.audio.preloadSimple('gallo', 'assets/audios/gallo.mp3').then(_ => {}).catch(err => {});
+        this.audio.preloadSimple('gato', 'assets/audios/gato.mp3').then(_ => {}).catch(err => {});
+        this.audio.preloadSimple('pato', 'assets/audios/pato.mp3').then(_ => {}).catch(err => {});
+        this.audio.preloadSimple('perro', 'assets/audios/perro.mp3').then(_ => {}).catch(err => {});
+        this.audio.preloadSimple('rana', 'assets/audios/rana.mp3').then(_ => {}).catch(err => {});
 
-        this.mostrar_opciones = false;
-        this.mostrar_resultado = false;
-        this.usuario.jugador = null;
-        this.usuario.maquina = null;
+        this.usuario.melodia = null;
+        this.historial = new Array();
     }
 
-    comenzarJuego() {
-
-        this.mostrarOpciones();
-
+    click(id) {
+        this.historial.push({id: id, fecha: this.getFechaActual(), time: (new Date()).getTime()});
+        this.emitirSonido(id);
+        this.vibrar();
     }
 
-    elegir(eleccion) {
-
-        this.usuario.jugador = eleccion;
-        this.mostrar_opciones = false;
-        this.mostrarEleccionMaquina();
-
-    }
-
-    mostrarEleccionMaquina() {
-        this.usuario.maquina = this.generarEleccionMaquina();
-        this.mostrar_resultado = true;
-        this.usuario.resultado = this.calcularResultado(this.usuario.jugador, this.usuario.maquina);
-
-        this.cargando_maquina = true;
-        setTimeout(() => {
-            this.cargando_maquina = false;
-            this.emitirResultado(this.usuario.resultado);
-            this.vibrarResultado(this.usuario.resultado);
-        }, 2000);
-
-        this.guardarUsuario(this.usuario);
-    }
-
-    generarEleccionMaquina() {
-        let opciones = ['piedra', 'papel', 'tijera'];
-        let eleccion = opciones[this.getRandomInt(0, 2)];
-        return eleccion;
-    }
-
-    getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    calcularResultado(jugador, maquina) {
-
-        return this.resultados[jugador][maquina];
-
-    }
-
-    emitirResultado(resultado) {
-
-        if (resultado == -1) {
-            this.audio.play('incorrecto',() => console.log('ok is done playing'));
-        } else if (resultado == 1) {
-            this.audio.play('correcto',() => console.log('ok is done playing'));
-        } else {
-            this.audio.play('empate',() => console.log('ok is done playing'));
+    emitirSonido(id) {
+        try{
+            this.audio.play(id, () => console.log('ok is done playing'));
+        } catch(e) {
+            console.log('emitirSonido. Exception: ' + e);
         }
-
     }
 
-    vibrarResultado(resultado) {
-
-        if (resultado == -1) {
-            this.vibrating = true;
-            this.vibration.vibrate([400,400,400]);
-            this.vibrating = false;
-        } else if (resultado == 1) {
-            this.vibrating = true;
-            this.vibration.vibrate(400);
-            this.vibrating = false;
-        }
-
-    }
-
-    /**
-     * Funcion para mostrar las opciones del jugador (piedra, papel o tijera)
-     * @return {[type]} [description]
-     */
-    mostrarOpciones() {
-
-        this.mostrar_opciones = true;
-
+    vibrar() {
+        this.vibrating = true;
+        this.vibration.vibrate(200);
+        this.vibrating = false;
     }
 
     finalizar() {
+        this.usuario.historial = this.historial;
+        this.guardarUsuario(this.usuario);
+        this.guardarMelodia(this.usuario.historial);
         this.irAlLogin();
     }
 
     guardarUsuario(usuario) {
         this.usuarios.push(usuario);
+    }
+
+    guardarMelodia(melodia) {
+
+        this.file.checkFile(this.file.dataDirectory, 'melodia.txt').then(_ => {
+            console.log('Existe el archivo: melodia.txt');
+
+            this.file.removeFile(this.file.dataDirectory, 'melodia.txt').then(_ => {
+                console.log('Archivo eliminado');
+
+                this.file.writeFile(this.file.dataDirectory, 'melodia.txt', JSON.stringify(melodia)).then(_ => {
+
+                    this.file.readAsBinaryString(this.file.dataDirectory, 'melodia.txt').then(data => {
+
+                        let melodias = JSON.parse(data);
+                        console.log('melodias');
+                        console.log(melodias);
+                    });
+
+
+                }).catch(err => {
+
+                    console.log('errpiano');
+                    console.log(err);
+
+                });
+            }).catch(err => {
+                console.log('Archivo no encontrado')
+            });
+
+        }).catch(err => {
+            console.log('No existe el archivo');
+            console.log(err);
+
+            this.file.writeFile(this.file.dataDirectory, 'melodia.txt', JSON.stringify(melodia)).then(_ => {
+
+                this.file.readAsBinaryString(this.file.dataDirectory, 'melodia.txt').then(data => {
+
+                    let melodias = JSON.parse(data);
+                    console.log('melodias');
+                    console.log(melodias);
+                });
+
+            }).catch(err => {
+
+                console.log('errpiano2');
+                console.log(err);
+
+            });
+        });
+
     }
 
     irAlLogin() {

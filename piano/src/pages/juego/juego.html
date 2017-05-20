@@ -6,60 +6,21 @@
 
 <ion-content padding>
 
-    <ion-list *ngIf="mostrar_opciones">
+    <ion-list>
+
         <ion-list-header>
-            Seleccione: Piedra, papel o tijera?
+            Presione un animal!!!
         </ion-list-header>
-        <button ion-item (click)="elegir('piedra')" class="animated bounceInLeft">
-            <img  src="assets/imagenes/piedra.jpg" width="64" height="64" item-left/>
-            <h2>Piedra</h2>
-        </button>
-        <button ion-item (click)="elegir('papel')" class="animated bounceInLeft">
-            <img src="assets/imagenes/papel.jpg" width="64" height="64" item-left/>
-            <h2>Papel</h2>
-        </button>
-        <button ion-item (click)="elegir('tijera')" class="animated bounceInLeft">
-            <img src="assets/imagenes/tijera.jpg" width="64" height="64" item-left/>
-            <h2>Tijera</h2>
+
+        <button *ngFor="let boton of botones" ion-item (click)="click(boton)" text-center class="btn-animal animated bounceInLeft">
+            <img src="assets/imagenes/{{boton}}.png" width="48" height="48"/>
+            <br>
+            <h2>{{boton}}</h2>
         </button>
     </ion-list>
 
-    <ion-row *ngIf="mostrar_resultado" class="animated fadeIn">
-        <ion-col col-5 class="animated bounceInLeft" text-center>
-            <h2 text-center>Usted</h2>
-
-            <img style="margin: 0 auto;" src="assets/imagenes/{{usuario.jugador}}.jpg" width="64" height="64"/>
-            <br>
-            <p text-center>{{usuario.jugador}}</p>
-        </ion-col>
-
-        <ion-col col-2 class="animated bounceInDown">
-            <h2>vs</h2>
-        </ion-col>
-
-        <ion-col col-5 class="animated bounceInRight" text-center>
-            <h2 text-center>Máquina</h2>
-
-            <ion-spinner text-center *ngIf="cargando_maquina" name="bubbles"></ion-spinner>
-
-            <div *ngIf="!cargando_maquina" text-center>
-                <img  style="margin: 0 auto;" src="assets/imagenes/{{usuario.maquina}}.jpg" width="64" height="64"/>
-                <br>
-                <p text-center>{{usuario.maquina}}</p>
-            </div>
-        </ion-col>
-    </ion-row>
-    <ion-row *ngIf="mostrar_resultado && !cargando_maquina" class="animated fadeIn">
-        <ion-col>
-            <br>
-            <h2 *ngIf="usuario.resultado == -1">Perdiste.<br>La máquina te ha ganado</h2>
-            <h2 *ngIf="usuario.resultado == 0">Empate</h2>
-            <h2 *ngIf="usuario.resultado == 1">Ganaste campeón!!!</h2>
-        </ion-col>
-    </ion-row>
-
-    <ion-buttons *ngIf="mostrar_resultado && !cargando_maquina"  class="animated fadeIn">
-        <button ion-button color="secondary" (click)="finalizar()" full>Jugar de nuevo</button>
+    <ion-buttons  class="animated fadeIn">
+        <button ion-button color="secondary" (click)="finalizar()" full>Terminar juego</button>
     </ion-buttons>
 
 </ion-content>

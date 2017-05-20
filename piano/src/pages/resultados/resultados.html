@@ -1,7 +1,7 @@
 <ion-header>
     <ion-navbar color="dark">
         <ion-title>
-            Resultados
+            Últimas melodías
         </ion-title>
     </ion-navbar>
 </ion-header>
@@ -11,56 +11,38 @@
     <p *ngIf="error">{{error}}</p>
 
     <div *ngIf="cargando_usuarios" text-center>
-        <ion-spinner  text-center name="bubbles"></ion-spinner>
+        <ion-spinner text-center name="bubbles"></ion-spinner>
+        <p *ngIf="esta_tardando">Esta tardando demasiado. Chequea tu connección a Internet.</p>
     </div>
 
-    <ion-list>
-        <ion-card *ngFor="let usuario of usuarios | async">
+    <ion-card *ngFor="let usuario of usuarios | async">
 
-            <ion-item>
-                <h2>{{ usuario.nombre }}</h2>
-                <p>{{ usuario.fecha_creacion }}</p>
-            </ion-item>
+        <ion-card-header>
+            <h2>{{ usuario.nombre }}</h2>
+            <p>{{ usuario.fecha_creacion }}</p>
+        </ion-card-header>
 
-            <ion-item>
-                <ion-row>
-                    <ion-col col-5>
-                        <h2>Usted</h2>
-                        <img  src="assets/imagenes/{{usuario.jugador}}.jpg" style="width: 48px; height: 48px;"/>
-                        <p>{{usuario.jugador}}</p>
-                    </ion-col>
-                    <ion-col col-2>
-                        <h2>vs</h2>
-                    </ion-col>
-                    <ion-col col-5>
-                        <h2>Máquina</h2>
-                        <img src="assets/imagenes/{{usuario.maquina}}.jpg" style="width: 48px; height: 48px;"/>
-                        <p>{{usuario.maquina}}</p>
-                    </ion-col>
-                </ion-row>
+        <ion-card-content>
+            <h2>Melodia:</h2>
+            <ion-row no-padding>
+                <button *ngFor="let boton of usuario.historial" ion-item text-center class="btn-animal animated bounceInLeft">
+                    <img src="assets/imagenes/{{boton.id}}.png" width="48" height="48"/>
+                    <h2>{{boton.id}} </h2>
+                </button>
+            </ion-row>
 
-                <ion-row>
-                    <ion-col>
-                        <br>
-                        <h2 *ngIf="usuario.resultado == -1">
-                        <ion-icon name="close-circle" color="danger" large></ion-icon>
-                            Perdiste.<br>La máquina te ha ganado
-                        </h2>
-                        <h2 *ngIf="usuario.resultado == 0">
-                        <ion-icon name="remove-circle" color="light" large></ion-icon>
-                            Empate
-                        </h2>
-                        <h2 *ngIf="usuario.resultado == 1">
-                        <ion-icon name="checkmark-circle" color="primary" large></ion-icon>
-                            Ganaste campeón!!!
-                        </h2>
+            <ion-row no-padding>
+                <button (click)="reproducir(usuario.historial)" clear color="danger" icon-left ion-button small>
+                    <span class="button-inner">
+                        <ion-icon name="musical-notes" role="img" aria-label="musical notes"></ion-icon>
+                        Reproducir ultimas 3
+                    </span>
+                    <div class="button-effect"></div>
+                </button>
+            </ion-row>
 
-                    </ion-col>
-                </ion-row>
-            </ion-item>
+        </ion-card-content>
 
-        </ion-card>
-
-    </ion-list>
+    </ion-card>
 
 </ion-content>

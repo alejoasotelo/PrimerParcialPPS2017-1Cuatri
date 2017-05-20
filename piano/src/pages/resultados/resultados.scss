@@ -2,6 +2,20 @@ page-resultados {
 
     background: ghostwhite;
 
+    .btn-animal{
+        float:left;
+        width: auto;
+        margin: 0px 1% 1% 1%;
+        text-align: center;
+        padding: 0px;
+
+        img{
+            width: 20px;
+            height: 20px;
+            margin: 0 auto;
+        }
+    }
+
     .label{
         h2{
             white-space: normal !important;
