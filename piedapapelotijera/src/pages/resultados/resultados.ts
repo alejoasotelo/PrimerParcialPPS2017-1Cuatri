@@ -27,6 +27,7 @@ export class ResultadosPage {
 
     onChange(new_value) {
         this.cargando_usuarios = true;
+        console.log(this.cargando_usuarios);
 
         new_value = parseInt(new_value);
 
@@ -57,12 +58,14 @@ export class ResultadosPage {
         this.usuarios.subscribe(
             function (x) {
                 self.cargando_usuarios = false;
+                console.log(this.cargando_usuarios);
                 console.log('onNext: %s', x);
             },
             function (e) {
                 self.cargando_usuarios = false;
                 self.error = e;
                 console.log('onError: %s', e);
+                console.log(this.cargando_usuarios);
             }
         );
     }
