@@ -46,6 +46,15 @@ export class JuegoPage {
                 'Mexico',
             ],
             respuesta: 1
+        },
+        {
+            pregunta: 'Quien era el central de rulos de la seleccion Argentina del 86?',
+            posibles_respuestas: [
+                'Ruggeri',
+                'Mac Allister ',
+                'Roberto Carlos',
+            ],
+            respuesta: 0
         }
     ];
 
@@ -107,7 +116,7 @@ export class JuegoPage {
             this.clicked[i] = false;
         }
 
-        if (this.paso >= this.MAX_PREGUNTAS) {
+        if (this.paso >= this.preguntas.length) {
             this.mostrar_finalizar = true;
             // Guardo los resultados.
             this.usuario.respuestas = this.respuestas;
@@ -165,10 +174,6 @@ export class JuegoPage {
         this.es_respuesta_correcta = es_correcta;
 
         return true;
-    }
-
-    getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max + 1 - min)) + min;
     }
 
     finalizar() {
